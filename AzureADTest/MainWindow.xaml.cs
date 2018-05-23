@@ -113,9 +113,17 @@ namespace AzureADTest
 
         private async void TestAPI_Click(object sender, RoutedEventArgs e)
         {
-            ResultText.Text += $"Testing API using '{AccessToken?.Substring(0, 10)}' access token{Environment.NewLine}";
+            if (String.IsNullOrEmpty(AccessToken))
+            {
+                ResultText.Text += "Canceling attempt to contact API.\n";
+                return;
+            }
 
-            for (int i = 0; i < 10; ++i)
+            ResultText.Text += $"Testing API using '{AccessToken.Substring(AccessToken.Length - 50, 50)}' access token{Environment.NewLine}";
+
+            await DeleteAllData();
+
+            for (int i = 0; i < 4; ++i)
                 await PostData();
 
             await GetData();
@@ -123,12 +131,6 @@ namespace AzureADTest
 
         private async Task PostData()
         {
-            if (AccessToken == null)
-            {
-                ResultText.Text += "Canceling attempt to contact API.\n";
-                return;
-            }
-
             HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
 
             var value = new Random().Next().ToString();
@@ -147,12 +149,6 @@ namespace AzureADTest
 
         private async Task GetData()
         {
-            if (AccessToken == null)
-            {
-                ResultText.Text += "Canceling attempt to contact API.\n";
-                return;
-            }
-
             HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
 
             ResultText.Text += $"Retrieving data list at {DateTime.Now.ToString()}";
@@ -176,15 +172,9 @@ namespace AzureADTest
 
         private async Task DeleteAllData()
         {
-            if (AccessToken == null)
-            {
-                ResultText.Text += "Canceling attempt to contact API.\n";
-                return;
-            }
-
             HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
 
-            ResultText.Text += $"Deleting data list at {DateTime.Now.ToString()}";
+            ResultText.Text += $"Deleting data list at {DateTime.Now.ToString()}{Environment.NewLine}";
             HttpResponseMessage response = await HttpClient.DeleteAsync($"{_webApiBaseAddress}/api/values");
 
             if (response.IsSuccessStatusCode)
