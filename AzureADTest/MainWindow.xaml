@@ -7,6 +7,16 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        
+        <StackPanel Background="Azure">
+            <Label Content="API Call Results" Margin="0,0,0,-5" FontFamily="Segoe Ui" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Name="SingInInteractively" Content="Sing-In Interactively" HorizontalAlignment="Right" Padding="5" Click="SingInInteractively_Click" Margin="5" FontFamily="Segoe Ui"/>
+                <Button Name="SingInSilently" Content="Sing-In Silently" HorizontalAlignment="Right" Padding="5" Click="SingInSilently_Click" Margin="5" FontFamily="Segoe Ui"/>
+                <Button Name="TestAPI" Content="Test API" HorizontalAlignment="Right" Padding="5" Click="TestAPI_Click" Margin="5" FontFamily="Segoe Ui"/>
+            </StackPanel>
+            <TextBox Name="ResultText" TextWrapping="Wrap" MinHeight="120" Margin="5" FontFamily="Segoe Ui"/>
+            <Label Content="Token Info" Margin="0,0,0,-5" FontFamily="Segoe Ui" />
+            <TextBox Name="TokenInfoText" TextWrapping="Wrap" MinHeight="70" Margin="5" FontFamily="Segoe Ui"/>
+        </StackPanel>
     </Grid>
 </Window>
