@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Threading;
 using System.Web.Http;
 
 namespace WebAPITest.Controllers
@@ -30,6 +31,15 @@ namespace WebAPITest.Controllers
             ValidatePermissions();
 
             _valuesStorage.Add(value);
+        }
+
+        [HttpDelete]
+        public void Delete()
+        {
+            ValidatePermissions();
+
+            var newStorage = new ConcurrentBag<String>();
+            Interlocked.Exchange(ref _valuesStorage, newStorage);
         }
 
         private void ValidatePermissions()

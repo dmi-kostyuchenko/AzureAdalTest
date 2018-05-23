@@ -1,5 +1,4 @@
-﻿using Microsoft.Identity.Client;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -48,11 +47,10 @@ namespace AzureADTest
 
             HttpClient = new HttpClient();
             AuthContext = new AuthenticationContext(_authority);
-            ClientCredential = new Microsoft.IdentityModel.Clients.ActiveDirectory.ClientCredential(_webClientId, _webAppKey);
+            ClientCredential = new ClientCredential(_webClientId, _webAppKey);
         }
 
         private Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationResult AdalAuthenticationResult { get; set; }
-        private Microsoft.Identity.Client.AuthenticationResult MsalAuthenticationResult { get; set; }
 
         private HttpClient HttpClient { get; }
         private AuthenticationContext AuthContext { get; }
@@ -62,8 +60,7 @@ namespace AzureADTest
         {
             get
             {
-                return MsalAuthenticationResult?.AccessToken ??
-                       AdalAuthenticationResult?.AccessToken;
+                return AdalAuthenticationResult?.AccessToken;
             }
         }
 
@@ -116,6 +113,8 @@ namespace AzureADTest
 
         private async void TestAPI_Click(object sender, RoutedEventArgs e)
         {
+            ResultText.Text += $"Testing API using '{AccessToken?.Substring(0, 10)}' access token{Environment.NewLine}";
+
             for (int i = 0; i < 10; ++i)
                 await PostData();
 
@@ -168,6 +167,29 @@ namespace AzureADTest
                 ResultText.Text += String.Join(Environment.NewLine, data);
                 ResultText.Text += Environment.NewLine;
                 ResultText.Text += $"Total item count:  {data.Length}{Environment.NewLine}";
+            }
+            else
+            {
+                ResultText.Text += $"Failed to retrieve data\nError:  {response.ReasonPhrase}{Environment.NewLine}";
+            }
+        }
+
+        private async Task DeleteAllData()
+        {
+            if (AccessToken == null)
+            {
+                ResultText.Text += "Canceling attempt to contact API.\n";
+                return;
+            }
+
+            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
+
+            ResultText.Text += $"Deleting data list at {DateTime.Now.ToString()}";
+            HttpResponseMessage response = await HttpClient.DeleteAsync($"{_webApiBaseAddress}/api/values");
+
+            if (response.IsSuccessStatusCode)
+            {
+                ResultText.Text += "The data has been deleted\n";
             }
             else
             {

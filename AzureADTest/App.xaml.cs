@@ -1,5 +1,4 @@
-﻿using Microsoft.Identity.Client;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -14,8 +13,5 @@ namespace AzureADTest
     /// </summary>
     public partial class App : Application
     {
-        public static PublicClientApplication PublicClientApp = new PublicClientApplication(ClientId);
-
-        private static string ClientId = "eeddd00f-c973-40a1-b345-9f5f6c7d95e0";
     }
 }
